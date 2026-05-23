@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 750" font-family="monospace">
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <text x="490" y="28" text-anchor="middle" font-size="16" font-family="sans-serif" font-weight="bold" fill="#2c3e50">ESP32 引脚连接图</text>
+
+  <!-- ====== ESP32 芯片主体 ====== -->
+  <rect x="280" y="60" width="440" height="520" rx="16" fill="#fafafa" stroke="#2c3e50" stroke-width="2.5"/>
+  <text x="500" y="85" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="bold" fill="#2c3e50">ESP32-WROOM-32E</text>
+  <line x1="300" y1="95" x2="700" y2="95" stroke="#ddd" stroke-width="1"/>
+
+  <!-- ====== 左侧引脚 (GPIO 输入/模拟) ====== -->
+  <!-- 3V3 -->
+  <rect x="275" y="110" width="12" height="20" rx="2" fill="#e74c3c"/>
+  <text x="260" y="124" text-anchor="end" font-size="10" fill="#e74c3c">3V3</text>
+
+  <!-- EN -->
+  <rect x="275" y="140" width="12" height="20" rx="2" fill="#555"/>
+  <text x="260" y="154" text-anchor="end" font-size="10">EN</text>
+  <text x="250" y="164" text-anchor="end" font-size="7" fill="#999">复位</text>
+
+  <!-- GPIO36 -->
+  <rect x="275" y="170" width="12" height="20" rx="2" fill="#1abc9c"/>
+  <text x="260" y="184" text-anchor="end" font-size="10" fill="#1abc9c">GPIO36</text>
+  <text x="250" y="194" text-anchor="end" font-size="7" fill="#999">ADC1_CH0</text>
+
+  <!-- GPIO39 -->
+  <rect x="275" y="200" width="12" height="20" rx="2" fill="#1abc9c"/>
+  <text x="260" y="214" text-anchor="end" font-size="10" fill="#1abc9c">GPIO39</text>
+  <text x="250" y="224" text-anchor="end" font-size="7" fill="#999">ADC1_CH3</text>
+
+  <!-- GPIO34 -->
+  <rect x="275" y="230" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="260" y="244" text-anchor="end" font-size="10" fill="#999">GPIO34</text>
+  <text x="250" y="254" text-anchor="end" font-size="7" fill="#bbb">NC</text>
+
+  <!-- GPIO35 -->
+  <rect x="275" y="260" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="260" y="274" text-anchor="end" font-size="10" fill="#999">GPIO35</text>
+  <text x="250" y="284" text-anchor="end" font-size="7" fill="#bbb">NC</text>
+
+  <!-- GPIO32 -->
+  <rect x="275" y="290" width="12" height="20" rx="2" fill="#f1c40f"/>
+  <text x="260" y="304" text-anchor="end" font-size="10" fill="#f39c12">GPIO32</text>
+  <text x="250" y="314" text-anchor="end" font-size="7" fill="#999">LED1 电源</text>
+
+  <!-- GPIO33 -->
+  <rect x="275" y="320" width="12" height="20" rx="2" fill="#f1c40f"/>
+  <text x="260" y="334" text-anchor="end" font-size="10" fill="#f39c12">GPIO33</text>
+  <text x="250" y="344" text-anchor="end" font-size="7" fill="#999">LED2 工作</text>
+
+  <!-- GPIO25 -->
+  <rect x="275" y="350" width="12" height="20" rx="2" fill="#e74c3c"/>
+  <text x="260" y="364" text-anchor="end" font-size="10" fill="#e74c3c">GPIO25</text>
+  <text x="250" y="374" text-anchor="end" font-size="7" fill="#c0392b">PWM 加热</text>
+
+  <!-- GPIO26 -->
+  <rect x="275" y="380" width="12" height="20" rx="2" fill="#27ae60"/>
+  <text x="260" y="394" text-anchor="end" font-size="10" fill="#27ae60">GPIO26</text>
+  <text x="250" y="404" text-anchor="end" font-size="7" fill="#27ae60">离子 EN</text>
+
+  <!-- GPIO27 -->
+  <rect x="275" y="410" width="12" height="20" rx="2" fill="#8e44ad"/>
+  <text x="260" y="424" text-anchor="end" font-size="10" fill="#8e44ad">GPIO27</text>
+  <text x="250" y="434" text-anchor="end" font-size="7" fill="#8e44ad">离子 FAULT</text>
+
+  <!-- GPIO14 -->
+  <rect x="275" y="440" width="12" height="20" rx="2" fill="#c0392b"/>
+  <text x="260" y="454" text-anchor="end" font-size="10" fill="#c0392b">GPIO14</text>
+  <text x="250" y="464" text-anchor="end" font-size="7" fill="#c0392b">过温断电</text>
+
+  <!-- GPIO12 -->
+  <rect x="275" y="470" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="260" y="484" text-anchor="end" font-size="10" fill="#999">GPIO12</text>
+  <text x="250" y="494" text-anchor="end" font-size="7" fill="#bbb">NC</text>
+
+  <!-- GND -->
+  <rect x="275" y="500" width="12" height="20" rx="2" fill="#333"/>
+  <text x="260" y="514" text-anchor="end" font-size="10">GND</text>
+
+  <!-- ====== 右侧引脚 (通信/控制) ====== -->
+  <!-- GND -->
+  <rect x="713" y="110" width="12" height="20" rx="2" fill="#333"/>
+  <text x="730" y="124" font-size="10">GND</text>
+
+  <!-- GPIO13 -->
+  <rect x="713" y="140" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="154" font-size="10" fill="#999">GPIO13</text>
+
+  <!-- GPIO15 -->
+  <rect x="713" y="170" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="184" font-size="10" fill="#999">GPIO15</text>
+
+  <!-- GPIO2 -->
+  <rect x="713" y="200" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="214" font-size="10" fill="#999">GPIO2</text>
+
+  <!-- GPIO4 -->
+  <rect x="713" y="230" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="244" font-size="10" fill="#999">GPIO4</text>
+
+  <!-- GPIO16 -->
+  <rect x="713" y="260" width="12" height="20" rx="2" fill="#9b59b6"/>
+  <text x="730" y="274" font-size="10" fill="#9b59b6">GPIO16</text>
+  <text x="750" y="284" font-size="7" fill="#9b59b6">4G U2 RX</text>
+
+  <!-- GPIO17 -->
+  <rect x="713" y="290" width="12" height="20" rx="2" fill="#9b59b6"/>
+  <text x="730" y="304" font-size="10" fill="#9b59b6">GPIO17</text>
+  <text x="750" y="314" font-size="7" fill="#9b59b6">4G U2 TX</text>
+
+  <!-- GPIO18 -->
+  <rect x="713" y="320" width="12" height="20" rx="2" fill="#9b59b6"/>
+  <text x="730" y="334" font-size="10" fill="#9b59b6">GPIO18</text>
+  <text x="750" y="344" font-size="7" fill="#9b59b6">4G RESET</text>
+
+  <!-- GPIO19 -->
+  <rect x="713" y="350" width="12" height="20" rx="2" fill="#9b59b6"/>
+  <text x="730" y="364" font-size="10" fill="#9b59b6">GPIO19</text>
+  <text x="750" y="374" font-size="7" fill="#9b59b6">4G PWRKEY</text>
+
+  <!-- GPIO21 -->
+  <rect x="713" y="380" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="394" font-size="10" fill="#999">GPIO21</text>
+  <text x="750" y="404" font-size="7" fill="#bbb">I2C SDA</text>
+
+  <!-- GPIO22 -->
+  <rect x="713" y="410" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="424" font-size="10" fill="#999">GPIO22</text>
+  <text x="750" y="434" font-size="7" fill="#bbb">I2C SCL</text>
+
+  <!-- GPIO5 -->
+  <rect x="713" y="440" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="454" font-size="10" fill="#999">GPIO5</text>
+
+  <!-- TXD0 -->
+  <rect x="713" y="470" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="484" font-size="10" fill="#999">TXD0</text>
+
+  <!-- RXD0 -->
+  <rect x="713" y="500" width="12" height="20" rx="2" fill="#bdc3c7"/>
+  <text x="730" y="514" font-size="10" fill="#999">RXD0</text>
+
+  <!-- ====== 连线到外设 (左侧) ====== -->
+  <!-- GPIO36 → NTC1 -->
+  <line x1="267" y1="180" x2="80" y2="180" stroke="#1abc9c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="170" font-size="8" fill="#1abc9c">NTC1 加热管温度</text>
+  <text x="80" y="195" font-size="7" fill="#999">10kΩ B3950</text>
+
+  <!-- GPIO39 → NTC2 -->
+  <line x1="267" y1="210" x2="80" y2="220" stroke="#1abc9c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="230" font-size="8" fill="#1abc9c">NTC2 出气口温度</text>
+
+  <!-- GPIO32 → LED1 -->
+  <line x1="267" y1="300" x2="80" y2="300" stroke="#f1c40f" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="310" font-size="8" fill="#f39c12">LED1 电源指示 (红)</text>
+  <text x="80" y="320" font-size="7" fill="#999">串 220Ω → 常亮</text>
+
+  <!-- GPIO33 → LED2 -->
+  <line x1="267" y1="330" x2="80" y2="340" stroke="#f1c40f" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="350" font-size="8" fill="#f39c12">LED2 工作指示 (绿)</text>
+
+  <!-- GPIO25 → MOSFET -->
+  <line x1="267" y1="360" x2="80" y2="380" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="390" font-size="8" fill="#e74c3c">MOSFET IRF520 Gate</text>
+  <text x="80" y="400" font-size="7" fill="#999">串 1kΩ · 对地 10kΩ</text>
+
+  <!-- GPIO26 → Relay IN1 -->
+  <line x1="267" y1="390" x2="80" y2="420" stroke="#27ae60" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="430" font-size="8" fill="#27ae60">继电器 IN1 负离子</text>
+
+  <!-- GPIO27 ← 负离子 FAULT -->
+  <line x1="80" y1="460" x2="267" y2="420" stroke="#8e44ad" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="120" y="445" font-size="8" fill="#8e44ad">负离子 FAULT ←</text>
+
+  <!-- GPIO14 → Relay IN2 -->
+  <line x1="267" y1="450" x2="80" y2="480" stroke="#c0392b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="490" font-size="8" fill="#c0392b">继电器 IN2 过温断电</text>
+
+  <!-- ====== 连线到外设 (右侧) ====== -->
+  <!-- GPIO16 → 4G TXD -->
+  <line x1="720" y1="270" x2="860" y2="270" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="790" y="265" font-size="8" fill="#555">A7670E TXD</text>
+
+  <!-- GPIO17 → 4G RXD -->
+  <line x1="720" y1="300" x2="860" y2="310" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="790" y="310" font-size="8" fill="#555">A7670E RXD</text>
+
+  <!-- GPIO18 → 4G RESET -->
+  <line x1="720" y1="330" x2="860" y2="350" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="790" y="350" font-size="8" fill="#555">A7670E RESET</text>
+
+  <!-- GPIO19 → 4G PWRKEY -->
+  <line x1="720" y1="360" x2="860" y2="380" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="790" y="380" font-size="8" fill="#555">A7670E PWRKEY</text>
+
+  <!-- GPIO21/22 → OLED -->
+  <line x1="720" y1="390" x2="860" y2="420" stroke="#bdc3c7" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="790" y="395" font-size="8" fill="#999">OLED SDA (可选)</text>
+  <line x1="720" y1="420" x2="860" y2="430" stroke="#bdc3c7" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="790" y="425" font-size="8" fill="#999">OLED SCL (可选)</text>
+
+  <!-- ====== 4G 模块框 ====== -->
+  <rect x="855" y="230" width="110" height="180" rx="8" fill="#f3e5f5" stroke="#9b59b6" stroke-width="1.5"/>
+  <text x="910" y="255" text-anchor="middle" font-size="10" font-family="sans-serif" font-weight="bold" fill="#6c3483">SIMCom</text>
+  <text x="910" y="270" text-anchor="middle" font-size="10" font-family="sans-serif" font-weight="bold" fill="#6c3483">A7670E</text>
+  <line x1="865" y1="285" x2="955" y2="285" stroke="#d2b4de" stroke-width="0.5"/>
+  <text x="870" y="298" font-size="8" fill="#555">VCC: 3.8V/2A</text>
+  <text x="870" y="312" font-size="8" fill="#555">TXD: GPIO16</text>
+  <text x="870" y="326" font-size="8" fill="#555">RXD: GPIO17</text>
+  <text x="870" y="340" font-size="8" fill="#555">RST: GPIO18</text>
+  <text x="870" y="354" font-size="8" fill="#555">PWR: GPIO19</text>
+  <text x="870" y="368" font-size="8" fill="#555">LTE Cat.1</text>
+  <text x="870" y="382" font-size="8" fill="#555">Nano SIM</text>
+  <text x="870" y="396" font-size="8" fill="#555">IPEX 天线</text>
+
+  <!-- ====== 保护电路 ====== -->
+  <rect x="20" y="540" width="440" height="120" rx="8" fill="#fff5f5" stroke="#e74c3c" stroke-width="1.5"/>
+  <text x="30" y="560" font-size="11" font-family="sans-serif" font-weight="bold" fill="#c0392b">硬件保护电路</text>
+
+  <text x="30" y="582" font-size="9" fill="#555">温度开关 KSD-01F 85°C 常闭</text>
+  <text x="30" y="598" font-size="9" fill="#555">  ──→ 继电器 IN2 控制线圈</text>
+  <text x="30" y="614" font-size="9" fill="#555">  ──→ NC 触点串入加热管 12V 回路</text>
+  <text x="30" y="630" font-size="9" fill="#555">  ──→ 超 85°C 自动断开, MCU 无关</text>
+  <text x="30" y="648" font-size="8" fill="#e74c3c">ESP32 GPIO14 可软件主动断电</text>
+
+  <!-- ====== 图例 ====== -->
+  <rect x="480" y="540" width="470" height="120" rx="6" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+  <text x="490" y="560" font-size="11" font-family="sans-serif" font-weight="bold" fill="#555">图例</text>
+  <rect x="495" y="578" width="14" height="10" rx="2" fill="#1abc9c"/><text x="525" y="580" font-size="9" fill="#555">ADC 模拟输入</text>
+  <rect x="550" y="578" width="14" height="10" rx="2" fill="#e74c3c"/><text x="580" y="580" font-size="9" fill="#555">PWM/功率控制</text>
+  <rect x="605" y="578" width="14" height="10" rx="2" fill="#27ae60"/><text x="635" y="580" font-size="9" fill="#555">GPIO 数字输出</text>
+  <rect x="660" y="578" width="14" height="10" rx="2" fill="#8e44ad"/><text x="690" y="580" font-size="9" fill="#555">GPIO 数字输入</text>
+  <rect x="715" y="578" width="14" height="10" rx="2" fill="#9b59b6"/><text x="745" y="580" font-size="9" fill="#555">UART 串口</text>
+  <rect x="770" y="578" width="14" height="10" rx="2" fill="#f1c40f"/><text x="800" y="580" font-size="9" fill="#555">LED</text>
+  <rect x="825" y="578" width="14" height="10" rx="2" fill="#bdc3c7"/><text x="855" y="580" font-size="9" fill="#555">NC 未接</text>
+  <rect x="495" y="598" width="14" height="10" rx="2" fill="#c0392b"/><text x="525" y="600" font-size="9" fill="#555">安全/保护</text>
+
+  <text x="930" y="720" text-anchor="end" font-size="9" font-family="sans-serif" fill="#bdc3c7">v1.0 · 2026-05-24</text>
+</svg>

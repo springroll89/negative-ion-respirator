@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#c0392b"/>
+    </marker>
+    <linearGradient id="box-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8f9fa"/>
+      <stop offset="100%" stop-color="#e9ecef"/>
+    </linearGradient>
+    <linearGradient id="mcu-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">负氧离子呼吸器 — 系统框图</text>
+
+  <!-- ====== 电源部分 ====== -->
+  <rect x="30" y="60" width="140" height="80" rx="8" fill="url(#box-grad)" stroke="#3498db" stroke-width="2"/>
+  <text x="100" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c3e50">电源适配器</text>
+  <text x="100" y="100" text-anchor="middle" font-size="10" fill="#7f8c8d">220V AC → 12V/5A DC</text>
+  <text x="100" y="118" text-anchor="middle" font-size="9" fill="#95a5a6">CCC 认证</text>
+
+  <!-- 12V 母线 -->
+  <line x1="180" y1="100" x2="250" y2="100" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+  <text x="200" y="92" font-size="9" fill="#c0392b">12V 母线</text>
+
+  <!-- ====== 加热管 ====== -->
+  <rect x="260" y="60" width="130" height="90" rx="8" fill="url(#box-grad)" stroke="#e74c3c" stroke-width="2"/>
+  <text x="325" y="82" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">陶瓷加热管</text>
+  <text x="325" y="100" text-anchor="middle" font-size="9" fill="#7f8c8d">12V / 50W PTC</text>
+  <text x="325" y="116" text-anchor="middle" font-size="9" fill="#7f8c8d">MOSFET PWM 驱动</text>
+  <text x="325" y="132" text-anchor="middle" font-size="8" fill="#e74c3c">软件限 80°C 硬保 85°C</text>
+
+  <line x1="250" y1="130" x2="325" y2="130" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="250" y1="100" x2="325" y2="90" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow-red)"/>
+
+  <!-- ====== 负离子发生器 ====== -->
+  <rect x="260" y="170" width="130" height="70" rx="8" fill="url(#box-grad)" stroke="#27ae60" stroke-width="2"/>
+  <text x="325" y="192" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">负离子发生器</text>
+  <text x="325" y="210" text-anchor="middle" font-size="9" fill="#7f8c8d">12V / &lt;10W</text>
+  <text x="325" y="226" text-anchor="middle" font-size="9" fill="#27ae60">≥30 万个/cm³</text>
+
+  <line x1="250" y1="200" x2="325" y2="200" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow-red)"/>
+
+  <!-- ====== 5V 降压 ====== -->
+  <rect x="260" y="260" width="130" height="55" rx="8" fill="url(#box-grad)" stroke="#f39c12" stroke-width="2"/>
+  <text x="325" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#2c3e50">LM2596 降压</text>
+  <text x="325" y="298" text-anchor="middle" font-size="9" fill="#7f8c8d">12V → 5V</text>
+
+  <line x1="250" y1="285" x2="325" y2="285" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow-red)"/>
+
+  <!-- ====== ESP32 主控 ====== -->
+  <rect x="420" y="70" width="200" height="110" rx="10" fill="url(#mcu-grad)" stroke="#4fc3f7" stroke-width="2.5"/>
+  <text x="520" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="#4fc3f7">ESP32-WROOM-32E</text>
+  <text x="520" y="115" text-anchor="middle" font-size="10" fill="#90a4ae">主控 MCU · 240MHz · 4MB Flash</text>
+  <line x1="440" y1="130" x2="600" y2="130" stroke="#2a3f5f" stroke-width="0.5"/>
+  <text x="455" y="145" font-size="9" fill="#78909c">Wi-Fi 802.11n</text>
+  <text x="455" y="158" font-size="9" fill="#78909c">FreeRTOS</text>
+  <text x="455" y="171" font-size="9" fill="#78909c">ESP-IDF v5.x</text>
+
+  <!-- 电源给 ESP32 -->
+  <line x1="400" y1="130" x2="470" y2="130" stroke="#e67e22" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="420" y="122" font-size="8" fill="#e67e22">3.3V</text>
+
+  <!-- ESP32 控制线 -->
+  <!-- PWM 到加热管 -->
+  <line x1="470" y1="150" x2="325" y2="140" stroke="#e74c3c" stroke-width="1.2" stroke-dasharray="6,3" marker-end="url(#arrow)"/>
+  <text x="380" y="140" font-size="8" fill="#e74c3c">GPIO25 PWM</text>
+
+  <!-- 负离子使能 -->
+  <line x1="470" y1="165" x2="325" y2="215" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="6,3" marker-end="url(#arrow)"/>
+  <text x="380" y="195" font-size="8" fill="#27ae60">GPIO26 EN</text>
+
+  <!-- 负离子故障检测 -->
+  <line x1="325" y1="230" x2="470" y2="155" stroke="#8e44ad" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+  <text x="400" y="195" font-size="7" fill="#8e44ad">GPIO27 FAULT</text>
+
+  <!-- 硬过温 -->
+  <line x1="470" y1="135" x2="380" y2="300" stroke="#c0392b" stroke-width="1" stroke-dasharray="6,3"/>
+
+  <!-- ====== 4G 模块 ====== -->
+  <rect x="420" y="210" width="200" height="75" rx="8" fill="url(#box-grad)" stroke="#9b59b6" stroke-width="2"/>
+  <text x="520" y="232" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">SIMCom A7670E</text>
+  <text x="520" y="250" text-anchor="middle" font-size="9" fill="#7f8c8d">4G LTE Cat.1 · UART AT 指令</text>
+  <text x="520" y="266" text-anchor="middle" font-size="9" fill="#9b59b6">GPIO16/17/18/19</text>
+
+  <line x1="520" y1="160" x2="520" y2="225" stroke="#9b59b6" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="540" y="195" font-size="8" fill="#9b59b6">UART2</text>
+
+  <line x1="400" y1="270" x2="470" y2="250" stroke="#f39c12" stroke-width="1.2"/>
+  <text x="430" y="255" font-size="7" fill="#f39c12">3.8V</text>
+
+  <!-- ====== 传感器 ====== -->
+  <rect x="440" y="310" width="160" height="55" rx="8" fill="url(#box-grad)" stroke="#1abc9c" stroke-width="2"/>
+  <text x="520" y="332" text-anchor="middle" font-size="10" font-weight="bold" fill="#2c3e50">温度传感器 ×2</text>
+  <text x="520" y="348" text-anchor="middle" font-size="9" fill="#7f8c8d">NTC 10kΩ B3950</text>
+
+  <line x1="500" y1="170" x2="520" y2="320" stroke="#1abc9c" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="540" y="250" font-size="7" fill="#1abc9c">GPIO36 ADC</text>
+
+  <!-- ====== LED ====== -->
+  <rect x="646" y="110" width="110" height="50" rx="8" fill="url(#box-grad)" stroke="#f1c40f" stroke-width="2"/>
+  <text x="700" y="130" text-anchor="middle" font-size="10" font-weight="bold" fill="#2c3e50">LED 指示灯 ×2</text>
+  <text x="700" y="146" text-anchor="middle" font-size="9" fill="#7f8c8d">GPIO32/33</text>
+
+  <line x1="610" y1="140" x2="650" y2="135" stroke="#f1c40f" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ====== OLED (可选) ====== -->
+  <rect x="646" y="180" width="110" height="45" rx="8" fill="url(#box-grad)" stroke="#bdc3c7" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="700" y="198" text-anchor="middle" font-size="9" fill="#95a5a6">OLED 0.96"</text>
+  <text x="700" y="214" text-anchor="middle" font-size="9" fill="#95a5a6">(可选) I2C</text>
+
+  <line x1="610" y1="150" x2="650" y2="195" stroke="#bdc3c7" stroke-width="1" stroke-dasharray="4,2"/>
+
+  <!-- ====== 输出 ====== -->
+  <rect x="640" y="260" width="200" height="60" rx="8" fill="#e8f8f5" stroke="#1abc9c" stroke-width="2"/>
+  <text x="740" y="280" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">出气口</text>
+  <text x="740" y="298" text-anchor="middle" font-size="9" fill="#7f8c8d">30°~35° 仰角 · 30~40°C · 含负离子</text>
+  <text x="740" y="312" text-anchor="middle" font-size="9" fill="#7f8c8d">下巴槽 · 易消毒清洁</text>
+
+  <line x1="400" y1="330" x2="460" y2="320" stroke="#1abc9c" stroke-width="1.2"/>
+
+  <!-- ====== 气流 ====== -->
+  <rect x="20" y="340" width="380" height="50" rx="8" fill="#ebf5fb" stroke="#3498db" stroke-width="1.5"/>
+  <text x="210" y="358" text-anchor="middle" font-size="10" font-weight="bold" fill="#2c3e50">气流路径:  底部进气孔 → 负离子发生器 → 陶瓷加热管 → 倾斜出气口</text>
+  <text x="210" y="376" text-anchor="middle" font-size="9" fill="#7f8c8d">自然对流 + 用户吸入</text>
+
+  <!-- ====== 通讯 ====== -->
+  <rect x="20" y="410" width="380" height="65" rx="8" fill="#fef9e7" stroke="#f39c12" stroke-width="1.5"/>
+  <text x="210" y="430" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">云通讯</text>
+  <text x="210" y="450" text-anchor="middle" font-size="9" fill="#7f8c8d">MQTT over Wi-Fi / 4G → EMQX Broker</text>
+  <text x="210" y="466" text-anchor="middle" font-size="9" fill="#7f8c8d">TLS 加密 · LWT 遗嘱消息 · OTA 远程升级</text>
+
+  <line x1="300" y1="170" x2="210" y2="430" stroke="#f39c12" stroke-width="1.2"/>
+
+  <!-- ====== 图例 ====== -->
+  <rect x="640" y="350" width="230" height="140" rx="6" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+  <text x="650" y="370" font-size="11" font-weight="bold" fill="#2c3e50">图例</text>
+  <line x1="650" y1="390" x2="690" y2="390" stroke="#c0392b" stroke-width="2"/><text x="700" y="388" font-size="9" fill="#555">电源线 12V</text>
+  <line x1="650" y1="410" x2="690" y2="410" stroke="#e74c3c" stroke-width="1.2" stroke-dasharray="6,3"/><text x="700" y="408" font-size="9" fill="#555">PWM 控制</text>
+  <line x1="650" y1="430" x2="690" y2="430" stroke="#333" stroke-width="1.2" marker-end="url(#arrow)"/><text x="700" y="428" font-size="9" fill="#555">信号/数据</text>
+  <line x1="650" y1="450" x2="690" y2="450" stroke="#bdc3c7" stroke-width="1" stroke-dasharray="4,2"/><text x="700" y="448" font-size="9" fill="#555">可选/未接</text>
+
+  <!-- 版本 -->
+  <text x="880" y="580" text-anchor="end" font-size="9" fill="#bdc3c7">v1.0 · 2026-05-24</text>
+</svg>

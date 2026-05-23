@@ -1,0 +1,325 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" font-family="sans-serif">
+  <defs>
+    <marker id="arrow-s" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L6,2.5 L0,5 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="25" text-anchor="middle" font-size="17" font-weight="bold" fill="#2c3e50">电路原理图</text>
+
+  <!-- ============================================ -->
+  <!-- 1. 加热管 MOSFET 驱动电路 -->
+  <!-- ============================================ -->
+  <rect x="15" y="45" width="470" height="270" rx="10" fill="#fff" stroke="#e74c3c" stroke-width="2"/>
+  <text x="25" y="68" font-size="13" font-weight="bold" fill="#e74c3c">1. 加热管 PWM 驱动电路</text>
+
+  <!-- ESP32 GPIO25 -->
+  <text x="40" y="110" font-size="10" fill="#2c3e50">ESP32</text>
+  <text x="40" y="124" font-size="10" fill="#2c3e50">GPIO25</text>
+  <line x1="80" y1="117" x2="130" y2="117" stroke="#e74c3c" stroke-width="1.5"/>
+
+  <!-- R1 1kΩ -->
+  <rect x="130" y="105" width="40" height="24" fill="none" stroke="#333" stroke-width="1.2"/>
+  <text x="150" y="122" text-anchor="middle" font-size="8" fill="#333">1k</text>
+  <line x1="170" y1="117" x2="210" y2="117" stroke="#333" stroke-width="1.2"/>
+
+  <!-- MOSFET IRF520 -->
+  <text x="210" y="95" font-size="9" fill="#555" text-anchor="middle">IRF520</text>
+  <line x1="218" y1="100" x2="218" y2="130" stroke="#333" stroke-width="1.5"/>  <!-- Gate -->
+
+  <!-- Gate 下拉 R2 10k -->
+  <line x1="218" y1="120" x2="250" y2="120" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="108" width="40" height="24" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="270" y="125" text-anchor="middle" font-size="7" fill="#333">10k</text>
+  <line x1="290" y1="120" x2="310" y2="120" stroke="#333" stroke-width="1"/>
+  <!-- 地符号 -->
+  <line x1="310" y1="120" x2="310" y2="135" stroke="#333" stroke-width="1"/>
+  <line x1="300" y1="135" x2="320" y2="135" stroke="#333" stroke-width="1.5"/>
+
+  <!-- MOSFET 竖线 -->
+  <line x1="218" y1="130" x2="218" y2="170" stroke="#333" stroke-width="1.5"/>
+  <!-- 斜线 Source -->
+  <line x1="218" y1="155" x2="230" y2="155" stroke="#333" stroke-width="1"/>
+
+  <!-- Drain 线 -->
+  <line x1="218" y1="135" x2="218" y2="145" stroke="#333" stroke-width="1.5"/>
+
+  <!-- 加热管 -->
+  <text x="200" y="170" font-size="9" fill="#e74c3c" text-anchor="middle">Drain (加热管-) </text>
+  <rect x="130" y="175" width="80" height="30" rx="5" fill="#fdebd0" stroke="#e74c3c" stroke-width="1.5"/>
+  <text x="170" y="187" text-anchor="middle" font-size="9" fill="#c0392b">陶瓷加热管</text>
+  <text x="170" y="199" text-anchor="middle" font-size="8" fill="#999">12V/50W PTC</text>
+
+  <!-- 加热管+ 接12V -->
+  <line x1="170" y1="175" x2="170" y2="140" stroke="#e74c3c" stroke-width="1.5"/>
+  <text x="145" y="150" font-size="8" fill="#c0392b">12V</text>
+
+  <!-- 续流二极管 -->
+  <line x1="130" y1="180" x2="110" y2="180" stroke="#333" stroke-width="1.2"/>
+  <!-- 二极管符号 -->
+  <polygon points="110,175 110,185 95,180" fill="none" stroke="#333" stroke-width="1"/>
+  <line x1="95" y1="175" x2="95" y2="185" stroke="#333" stroke-width="1.2"/>
+  <line x1="95" y1="180" x2="80" y2="180" stroke="#333" stroke-width="1"/>
+  <text x="70" y="195" font-size="7" fill="#555">1N4007</text>
+
+  <!-- Source 到地 -->
+  <line x1="230" y1="155" x2="250" y2="155" stroke="#333" stroke-width="1"/>
+  <line x1="250" y1="155" x2="250" y2="165" stroke="#333" stroke-width="1"/>
+  <line x1="240" y1="165" x2="260" y2="165" stroke="#333" stroke-width="1.5"/>
+  <text x="265" y="165" font-size="8" fill="#555">GND</text>
+
+  <!-- Gate 节点标注 -->
+  <circle cx="218" cy="117" r="3" fill="#333"/>
+
+  <text x="40" y="240" font-size="8" fill="#999">PWM 频率: 1kHz</text>
+  <text x="40" y="255" font-size="8" fill="#999">占空比: 0-100% (10bit, 0-1023)</text>
+  <text x="40" y="270" font-size="8" fill="#999">软件限: 80°C 限幅 · 硬件保: 85°C 断电</text>
+  <text x="40" y="290" font-size="8" fill="#e74c3c">注意: MOSFET 需安装散热片</text>
+
+  <!-- ============================================ -->
+  <!-- 2. NTC 温度传感器电路 -->
+  <!-- ============================================ -->
+  <rect x="15" y="330" width="470" height="190" rx="10" fill="#fff" stroke="#1abc9c" stroke-width="2"/>
+  <text x="25" y="353" font-size="13" font-weight="bold" fill="#1abc9c">2. 温度传感电路 (×2, 加热管 + 出气口)</text>
+
+  <!-- 3.3V -->
+  <text x="40" y="390" font-size="10" fill="#e74c3c">3.3V</text>
+  <line x1="65" y1="387" x2="110" y2="387" stroke="#e74c3c" stroke-width="1.2"/>
+
+  <!-- R 10kΩ 精密 -->
+  <rect x="110" y="375" width="50" height="24" fill="none" stroke="#333" stroke-width="1.2"/>
+  <text x="135" y="392" text-anchor="middle" font-size="8" fill="#333">10k 1%</text>
+
+  <!-- 到 ADC 节点 -->
+  <line x1="160" y1="387" x2="220" y2="387" stroke="#333" stroke-width="1.2"/>
+  <circle cx="220" cy="387" r="3.5" fill="#1abc9c"/>
+
+  <!-- 到 ADC -->
+  <line x1="223" y1="387" x2="280" y2="387" stroke="#1abc9c" stroke-width="1.5" marker-end="url(#arrow-s)"/>
+  <text x="240" y="380" font-size="8" fill="#1abc9c">ADC1_CHx</text>
+
+  <!-- NTC -->
+  <line x1="220" y1="390" x2="220" y2="430" stroke="#333" stroke-width="1.2"/>
+  <!-- NTC 符号 (带温度箭头) -->
+  <line x1="210" y1="430" x2="230" y2="450" stroke="#333" stroke-width="1.5"/>
+  <line x1="218" y1="433" x2="222" y2="437" stroke="#e74c3c" stroke-width="1.2"/>
+  <line x1="210" y1="445" x2="230" y2="440" stroke="#e74c3c" stroke-width="1"/>
+
+  <text x="240" y="440" font-size="9" fill="#333">NTC 10kΩ</text>
+  <text x="240" y="452" font-size="8" fill="#999">@25°C, B=3950</text>
+
+  <!-- NTC 下到 GND -->
+  <line x1="220" y1="450" x2="220" y2="475" stroke="#333" stroke-width="1.2"/>
+  <line x1="210" y1="475" x2="230" y2="475" stroke="#333" stroke-width="1.5"/>
+  <text x="240" y="478" font-size="8" fill="#555">GND</text>
+
+  <!-- 分压公式 -->
+  <text x="40" y="480" font-size="9" fill="#555">Vout = 3.3V × R_NTC / (R_NTC + 10kΩ)</text>
+  <text x="40" y="498" font-size="9" fill="#555">ADC 12bit, 需软件校正表转换温度</text>
+
+  <!-- ============================================ -->
+  <!-- 3. 负离子 + 继电器电路 -->
+  <!-- ============================================ -->
+  <rect x="500" y="45" width="485" height="270" rx="10" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+  <text x="510" y="68" font-size="13" font-weight="bold" fill="#27ae60">3. 负离子发生器 + 继电器控制</text>
+
+  <!-- ESP32 GPIO26 -->
+  <text x="520" y="105" font-size="10" fill="#2c3e50">ESP32</text>
+  <text x="520" y="119" font-size="10" fill="#2c3e50">GPIO26</text>
+  <line x1="560" y1="112" x2="600" y2="112" stroke="#27ae60" stroke-width="1.5"/>
+
+  <!-- R 限流 -->
+  <rect x="600" y="100" width="35" height="22" fill="none" stroke="#333" stroke-width="1.2"/>
+  <text x="617" y="116" text-anchor="middle" font-size="7" fill="#333">1k</text>
+
+  <!-- 三极管驱动 -->
+  <line x1="635" y1="112" x2="660" y2="112" stroke="#333" stroke-width="1.2"/>
+  <text x="650" y="105" font-size="7" fill="#555">Q1</text>
+  <text x="650" y="95" font-size="7" fill="#555">S8050</text>
+
+  <line x1="660" y1="112" x2="660" y2="155" stroke="#333" stroke-width="1.2"/>
+  <line x1="660" y1="130" x2="675" y2="130" stroke="#333" stroke-width="1"/>
+
+  <!-- 继电器线圈 -->
+  <rect x="680" y="130" width="55" height="30" rx="3" fill="#eafaf1" stroke="#27ae60" stroke-width="1.2"/>
+  <text x="707" y="148" text-anchor="middle" font-size="7" fill="#555">继电器</text>
+  <text x="707" y="157" text-anchor="middle" font-size="6" fill="#999">12V 线圈</text>
+
+  <!-- 线圈接 12V -->
+  <line x1="707" y1="130" x2="707" y2="115" stroke="#333" stroke-width="1.2"/>
+  <text x="692" y="110" font-size="7" fill="#c0392b">12V</text>
+
+  <!-- 续流二极管 -->
+  <line x1="735" y1="140" x2="760" y2="140" stroke="#333" stroke-width="1"/>
+  <polygon points="760,135 760,145 775,140" fill="none" stroke="#333" stroke-width="1"/>
+  <line x1="775" y1="135" x2="775" y2="145" stroke="#333" stroke-width="1"/>
+  <line x1="775" y1="140" x2="800" y2="140" stroke="#333" stroke-width="1"/>
+  <text x="790" y="135" font-size="6" fill="#555">1N4148</text>
+
+  <!-- 触点 -->
+  <line x1="707" y1="160" x2="707" y2="175" stroke="#333" stroke-width="1"/>
+  <text x="695" y="195" font-size="7" fill="#555">COM</text>
+  <line x1="707" y1="175" x2="690" y2="195" stroke="#333" stroke-width="1" stroke-dasharray="8,3"/>
+  <circle cx="707" cy="195" r="2" fill="none" stroke="#333" stroke-width="1"/>
+
+  <text x="720" y="195" font-size="7" fill="#555">NO</text>
+  <line x1="707" y1="175" x2="740" y2="195" stroke="#333" stroke-width="1"/>
+  <circle cx="740" cy="195" r="2" fill="#333"/>
+
+  <text x="690" y="220" font-size="7" fill="#999">NC (空)</text>
+
+  <!-- 负离子 VCC -->
+  <line x1="690" y1="195" x2="660" y2="220" stroke="#333" stroke-width="1.2"/>
+  <text x="645" y="215" font-size="7" fill="#c0392b">12V</text>
+
+  <line x1="740" y1="195" x2="760" y2="220" stroke="#333" stroke-width="1.2"/>
+
+  <!-- 负离子发生器 -->
+  <rect x="760" y="210" width="100" height="50" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="810" y="230" text-anchor="middle" font-size="9" fill="#27ae60">负离子发生器</text>
+  <text x="810" y="244" text-anchor="middle" font-size="8" fill="#999">12V ≤10W</text>
+  <text x="810" y="256" text-anchor="middle" font-size="8" fill="#27ae60">≥30万/cm³</text>
+
+  <!-- GND -->
+  <line x1="810" y1="260" x2="810" y2="285" stroke="#333" stroke-width="1.2"/>
+  <line x1="800" y1="285" x2="820" y2="285" stroke="#333" stroke-width="1.5"/>
+  <text x="825" y="288" font-size="7" fill="#555">GND</text>
+
+  <!-- ============================================ -->
+  <!-- 3b. 故障检测 GPIO27 -->
+  <line x1="820" y1="235" x2="880" y2="235" stroke="#8e44ad" stroke-width="1.2"/>
+  <text x="850" y="230" font-size="7" fill="#8e44ad">FAULT</text>
+
+  <rect x="880" y="225" width="35" height="20" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="897" y="239" text-anchor="middle" font-size="7" fill="#333">10k</text>
+
+  <line x1="915" y1="235" x2="935" y2="235" stroke="#8e44ad" stroke-width="1.2"/>
+  <text x="925" y="230" font-size="7" fill="#8e44ad">ESP32 GPIO27</text>
+
+  <line x1="897" y1="245" x2="897" y2="255" stroke="#333" stroke-width="1"/>
+  <text x="890" y="265" font-size="6" fill="#999">上拉</text>
+  <line x1="897" y1="255" x2="897" y2="260" stroke="#333" stroke-width="1"/>
+  <text x="885" y="272" font-size="7" fill="#c0392b">3.3V</text>
+
+  <!-- ============================================ -->
+  <!-- 4. 供电拓扑 -->
+  <!-- ============================================ -->
+  <rect x="500" y="330" width="485" height="210" rx="10" fill="#fff" stroke="#f39c12" stroke-width="2"/>
+  <text x="510" y="353" font-size="13" font-weight="bold" fill="#f39c12">4. 供电拓扑</text>
+
+  <!-- 220V AC -->
+  <text x="520" y="395" font-size="11" fill="#2c3e50">220V AC</text>
+  <line x1="565" y1="392" x2="610" y2="392" stroke="#c0392b" stroke-width="1.5"/>
+
+  <!-- 适配器 -->
+  <rect x="610" y="375" width="90" height="35" rx="5" fill="#fef9e7" stroke="#f39c12" stroke-width="1.5"/>
+  <text x="655" y="391" text-anchor="middle" font-size="8" fill="#2c3e50">12V/5A</text>
+  <text x="655" y="403" text-anchor="middle" font-size="7" fill="#999">适配器</text>
+
+  <line x1="700" y1="392" x2="740" y2="392" stroke="#c0392b" stroke-width="2"/>
+
+  <!-- 12V 母线节点 -->
+  <circle cx="745" cy="392" r="4" fill="#c0392b"/>
+  <text x="755" y="388" font-size="9" fill="#c0392b" font-weight="bold">12V 母线</text>
+
+  <!-- 分支 -->
+  <line x1="749" y1="392" x2="820" y2="392" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="790" y="385" font-size="7" fill="#c0392b">4A</text>
+
+  <!-- 加热管供电 -->
+  <text x="825" y="388" font-size="8" fill="#e74c3c">加热管</text>
+  <text x="825" y="398" font-size="7" fill="#999">12V/4A</text>
+
+  <!-- 分支2 -->
+  <line x1="749" y1="396" x2="749" y2="440" stroke="#c0392b" stroke-width="1.5"/>
+
+  <!-- 负离子供电 -->
+  <line x1="745" y1="440" x2="820" y2="440" stroke="#c0392b" stroke-width="1.2"/>
+  <text x="825" y="443" font-size="8" fill="#27ae60">负离子 12V/0.5A</text>
+
+  <!-- LM2596 -->
+  <line x1="749" y1="440" x2="749" y2="465" stroke="#f39c12" stroke-width="1.2"/>
+  <rect x="720" y="465" width="60" height="30" rx="4" fill="#fef9e7" stroke="#f39c12" stroke-width="1.2"/>
+  <text x="750" y="480" text-anchor="middle" font-size="8" fill="#2c3e50">LM2596</text>
+  <text x="750" y="492" text-anchor="middle" font-size="7" fill="#999">12→5V</text>
+
+  <line x1="750" y1="495" x2="750" y2="520" stroke="#e67e22" stroke-width="1.2"/>
+  <text x="755" y="512" font-size="7" fill="#e67e22">5V</text>
+
+  <!-- 3.3V LDO -->
+  <rect x="720" y="520" width="60" height="28" rx="4" fill="#fef9e7" stroke="#2980b9" stroke-width="1.2"/>
+  <text x="750" y="532" text-anchor="middle" font-size="7" fill="#2c3e50">AMS1117</text>
+  <text x="750" y="543" text-anchor="middle" font-size="7" fill="#999">3.3V</text>
+
+  <line x1="750" y1="548" x2="750" y2="560" stroke="#2980b9" stroke-width="1.2"/>
+  <text x="755" y="572" font-size="7" fill="#2980b9">ESP32</text>
+
+  <!-- 4G 独立供电 -->
+  <line x1="749" y1="440" x2="830" y2="440" stroke="#f39c12" stroke-width="1.2"/>
+  <rect x="830" y="425" width="60" height="25" rx="4" fill="#f3e5f5" stroke="#9b59b6" stroke-width="1"/>
+  <text x="860" y="435" text-anchor="middle" font-size="7" fill="#2c3e50">DCDC</text>
+  <text x="860" y="447" text-anchor="middle" font-size="6" fill="#999">3.8V/2A</text>
+  <line x1="860" y1="450" x2="860" y2="470" stroke="#9b59b6" stroke-width="1"/>
+  <text x="865" y="480" font-size="7" fill="#9b59b6">4G模块</text>
+
+  <!-- ============================================ -->
+  <!-- 5. LED 电路 -->
+  <!-- ============================================ -->
+  <rect x="15" y="535" width="470" height="110" rx="10" fill="#fff" stroke="#f1c40f" stroke-width="2"/>
+  <text x="25" y="558" font-size="13" font-weight="bold" fill="#f1c40f">5. LED 指示灯</text>
+
+  <!-- LED1 -->
+  <text x="50" y="590" font-size="10" fill="#2c3e50">ESP32 GPIO32</text>
+  <line x1="140" y1="587" x2="170" y2="587" stroke="#f1c40f" stroke-width="1.2"/>
+
+  <rect x="170" y="575" width="35" height="24" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="187" y="592" text-anchor="middle" font-size="8" fill="#333">220Ω</text>
+
+  <!-- LED 符号 -->
+  <line x1="205" y1="587" x2="235" y2="587" stroke="#333" stroke-width="1.2"/>
+  <polygon points="235,580 245,587 235,594" fill="none" stroke="#e74c3c" stroke-width="1.2"/>
+  <line x1="245" y1="580" x2="245" y2="594" stroke="#e74c3c" stroke-width="1.2"/>
+  <text x="250" y="592" font-size="8" fill="#e74c3c">LED1 红</text>
+  <!-- 箭头 (发光) -->
+  <line x1="250" y1="580" x2="260" y2="575" stroke="#e74c3c" stroke-width="0.8"/>
+  <line x1="250" y1="580" x2="255" y2="572" stroke="#e74c3c" stroke-width="0.8"/>
+
+  <line x1="245" y1="587" x2="270" y2="587" stroke="#333" stroke-width="1"/>
+  <line x1="270" y1="587" x2="270" y2="598" stroke="#333" stroke-width="1"/>
+  <line x1="260" y1="598" x2="280" y2="598" stroke="#333" stroke-width="1.5"/>
+  <text x="285" y="601" font-size="7" fill="#555">GND</text>
+
+  <text x="50" y="620" font-size="8" fill="#999">通电常亮, 指示电源状态</text>
+
+  <!-- LED2 -->
+  <text x="50" y="642" font-size="10" fill="#2c3e50">ESP32 GPIO33</text>
+  <line x1="140" y1="639" x2="170" y2="639" stroke="#27ae60" stroke-width="1.2"/>
+  <rect x="170" y="627" width="35" height="24" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="187" y="644" text-anchor="middle" font-size="8" fill="#333">220Ω</text>
+  <line x1="205" y1="639" x2="235" y2="639" stroke="#333" stroke-width="1.2"/>
+  <polygon points="235,632 245,639 235,646" fill="none" stroke="#27ae60" stroke-width="1.2"/>
+  <line x1="245" y1="632" x2="245" y2="646" stroke="#27ae60" stroke-width="1.2"/>
+  <text x="250" y="644" font-size="8" fill="#27ae60">LED2 绿</text>
+  <line x1="245" y1="639" x2="270" y2="639" stroke="#333" stroke-width="1"/>
+  <line x1="270" y1="639" x2="270" y2="650" stroke="#333" stroke-width="1"/>
+  <line x1="260" y1="650" x2="280" y2="650" stroke="#333" stroke-width="1.5"/>
+
+  <text x="50" y="670" font-size="8" fill="#999">待机灭 · 预热 1Hz 闪 · 运行常亮 · 故障 5Hz 快闪</text>
+
+  <!-- ============================================ -->
+  <!-- BOM 摘要 -->
+  <!-- ============================================ -->
+  <rect x="15" y="660" width="970" height="160" rx="8" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+  <text x="25" y="683" font-size="12" font-weight="bold" fill="#555">BOM 关键物料</text>
+
+  <text x="30" y="708" font-size="9" fill="#333">
+    <tspan x="30" dy="0">ESP32-WROOM-32E ×1 · 陶瓷加热管 12V/50W ×1 · 负离子发生器 12V ×1 · NTC 10kΩ B3950 ×2</tspan>
+    <tspan x="30" dy="18">MOSFET IRF520 ×1 · 散热片 ×1 · 继电器模块 2路12V ×1 · S8050 NPN ×1</tspan>
+    <tspan x="30" dy="18">SIMCom A7670E ×1 · Nano SIM 卡槽 ×1 · IPEX 天线 ×1 · 温度开关 85°C ×1</tspan>
+    <tspan x="30" dy="18">LM2596 降压模块 ×1 · AMS1117-3.3 ×1 · 3.8V DCDC ×1 · LED 红/绿各1 · OLED 0.96" (可选)</tspan>
+    <tspan x="30" dy="18">电阻: 10kΩ×5, 1kΩ×3, 220Ω×2 · 电容: 100μF/16V×3, 100nF×3 · 二极管: 1N4007×1, 1N4148×1</tspan>
+    <tspan x="30" dy="18">电源适配器 12V/5A ×1 · Nano SIM 卡 ×1 · 杜邦线/排针若干 · PCB 板 ×1</tspan>
+  </text>
+
+  <text x="960" y="875" text-anchor="end" font-size="9" fill="#bdc3c7">v1.0 · 2026-05-24</text>
+</svg>
