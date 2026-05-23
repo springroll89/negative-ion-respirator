@@ -4,19 +4,26 @@ import (
 	"context"
 	"fmt"
 	"negative-ion-respirator/backend/internal/model"
-	"negative-ion-respirator/backend/internal/repository"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// AdminRepo is the interface for admin user data access. Defined here
+// following "accept interfaces, return structs" and "define interfaces
+// where they are used".
+type AdminRepo interface {
+	FindByUsername(ctx context.Context, username string) (*model.AdminUser, error)
+	Create(ctx context.Context, u *model.AdminUser) error
+}
+
 type AuthService struct {
-	repo      *repository.AdminRepo
+	repo      AdminRepo
 	jwtSecret []byte
 }
 
-func NewAuthService(repo *repository.AdminRepo, secret string) *AuthService {
+func NewAuthService(repo AdminRepo, secret string) *AuthService {
 	return &AuthService{repo: repo, jwtSecret: []byte(secret)}
 }
 

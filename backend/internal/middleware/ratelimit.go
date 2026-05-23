@@ -28,6 +28,12 @@ func NewRateLimiter(rate, capacity float64) *RateLimiter {
 	}
 }
 
+// Allow checks whether a request from the given key is permitted under the
+// current rate limit. It is safe for concurrent use.
+func (rl *RateLimiter) Allow(key string) bool {
+	return rl.allow(key)
+}
+
 func (rl *RateLimiter) allow(key string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()

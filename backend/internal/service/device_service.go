@@ -4,16 +4,36 @@ import (
 	"context"
 	"fmt"
 	"negative-ion-respirator/backend/internal/model"
-	"negative-ion-respirator/backend/internal/mqtt"
-	"negative-ion-respirator/backend/internal/repository"
 )
 
-type DeviceService struct {
-	repo *repository.DeviceRepo
-	mqtt *mqtt.Client
+// DeviceRepo is the interface for device data access. Defined here
+// following "accept interfaces, return structs" and "define interfaces
+// where they are used".
+type DeviceRepo interface {
+	FindByID(ctx context.Context, id int64) (*model.Device, error)
+	FindBySN(ctx context.Context, sn string) (*model.Device, error)
+	List(ctx context.Context, offset, limit int) ([]model.Device, int, error)
+	UpdateStatus(ctx context.Context, id int64, status string) error
+	Create(ctx context.Context, d *model.Device) error
+	GetConfig(ctx context.Context, deviceID int64) (*model.DeviceConfig, error)
+	UpsertConfig(ctx context.Context, cfg *model.DeviceConfig) error
+	GetRegionConfig(ctx context.Context, region, season string) (*model.RegionConfig, error)
+	UpsertRegionConfig(ctx context.Context, c *model.RegionConfig) error
 }
 
-func NewDeviceService(repo *repository.DeviceRepo, mqttClient *mqtt.Client) *DeviceService {
+// MQTTClient is the interface for sending commands to devices.
+type MQTTClient interface {
+	SendCmd(ctx context.Context, deviceID int64, cmd model.DeviceCmd) error
+}
+
+type DeviceService struct {
+	repo DeviceRepo
+	mqtt MQTTClient
+}
+
+// NewDeviceService creates a DeviceService. mqttClient may be nil for
+// read-only operations (config changes without active devices).
+func NewDeviceService(repo DeviceRepo, mqttClient MQTTClient) *DeviceService {
 	return &DeviceService{repo: repo, mqtt: mqttClient}
 }
 
