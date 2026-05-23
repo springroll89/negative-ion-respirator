@@ -66,6 +66,7 @@ func main() {
 	r.Use(middleware.CORS())
 
 	api := r.Group("/api/v1")
+	api.Use(middleware.RateLimit(10, 20))
 	{
 		api.POST("/order/create", orderH.Create)
 		api.GET("/order/query", orderH.Query)
@@ -75,6 +76,7 @@ func main() {
 		api.GET("/device/status/:id", deviceH.GetDevice)
 
 		api.POST("/auth/login", authH.Login)
+		api.POST("/auth/refresh", authH.Refresh)
 
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthRequired(authSvc))

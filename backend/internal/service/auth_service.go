@@ -61,3 +61,25 @@ func (s *AuthService) ValidateToken(tokenStr string) (jwt.MapClaims, error) {
 	}
 	return nil, fmt.Errorf("invalid token")
 }
+
+func (s *AuthService) RefreshToken(ctx context.Context, username string) (*model.LoginResp, error) {
+	user, err := s.repo.FindByUsername(ctx, username)
+	if err != nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	expiresAt := time.Now().Add(24 * time.Hour)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"role":     user.Role,
+		"exp":      expiresAt.Unix(),
+	})
+
+	tokenStr, err := token.SignedString(s.jwtSecret)
+	if err != nil {
+		return nil, fmt.Errorf("sign token: %w", err)
+	}
+
+	return &model.LoginResp{Token: tokenStr, ExpiresAt: expiresAt.Unix()}, nil
+}
