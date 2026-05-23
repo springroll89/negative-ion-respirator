@@ -67,6 +67,37 @@
     └── superpowers/            # 设计文档
 ```
 
+## 硬件电路图纸
+
+| 图纸 | 文件 | 说明 |
+|------|------|------|
+| **系统框图** | [system-block.svg](docs/schematics/system-block.svg) | 整体架构、电源拓扑、数据流 |
+| **引脚连接图** | [pin-connections.svg](docs/schematics/pin-connections.svg) | ESP32 全部 16 个 GPIO 到外设的完整映射 |
+| **电路原理图** | [circuit-schematic.svg](docs/schematics/circuit-schematic.svg) | MOSFET 驱动、NTC 分压、继电器控制、供电拓扑（标准电子符号） |
+| **PCB 布局图** | [pcb-layout.svg](docs/schematics/pcb-layout.svg) | 6 区功能布局、元件位置、走线宽度、层叠结构、尺寸 |
+
+> 浏览器打开 [docs/schematics/index.html](docs/schematics/index.html) 可切换查看全部图纸。SVG 矢量格式，可无限缩放，打印即为标准图纸。
+
+### 关键硬件参数
+
+| 参数 | 值 |
+|------|-----|
+| PCB 尺寸 | 100mm × 80mm, 双层 FR-4 1.6mm |
+| 主控 | ESP32-WROOM-32E (4MB Flash) |
+| 加热管 | 12V/50W PTC 陶瓷, MOSFET PWM 1kHz |
+| 温度传感 | NTC 10kΩ B3950 ×2 (加热管+出气口) |
+| 过温保护 | 软件限 80°C + 温度开关 85°C 硬件断电 |
+| 4G 模块 | SIMCom A7670E LTE Cat.1 (UART AT 指令) |
+| 负离子 | 12V 独立供电, ≥30 万个/cm³, 带故障检测 |
+| 供电 | 220V AC → 12V/5A 适配器 → LM2596(5V) → AMS1117(3.3V) |
+| 安装孔 | 4× M3, 距板边 5mm |
+
+### BOM 核心物料
+
+ESP32-WROOM-32E · 陶瓷加热管 12V/50W · 负离子发生器 12V · NTC 10kΩ B3950 ×2 · MOSFET IRF520 + 散热片 · 继电器 2路12V · S8050 · SIMCom A7670E + Nano SIM + IPEX 天线 · 温度开关 KSD-01F 85°C · LM2596 · AMS1117-3.3 · LED 红/绿 · 电阻/电容/二极管若干
+
+详见 [docs/hardware-schematic.md](docs/hardware-schematic.md)
+
 ## 快速开始
 
 ### 开发环境
