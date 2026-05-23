@@ -1,30 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
-
-const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    name: 'dashboard',
-    component: () => import('@/views/Dashboard.vue'),
-    meta: { title: '仪表盘' },
-  },
-  {
-    path: '/devices',
-    name: 'devices',
-    component: () => import('@/views/Devices.vue'),
-    meta: { title: '设备管理' },
-  },
-  {
-    path: '/records',
-    name: 'records',
-    component: () => import('@/views/Records.vue'),
-    meta: { title: '使用记录' },
-  },
-]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue') },
+    { path: '/', name: 'dashboard', component: () => import('@/views/DashboardView.vue'), meta: { requiresAuth: true } },
+    { path: '/devices', name: 'devices', component: () => import('@/views/DeviceListView.vue'), meta: { requiresAuth: true } },
+  ],
+})
+
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.meta.requiresAuth && !token) next('/login')
+  else next()
 })
 
 export default router
