@@ -1,0 +1,63 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"negative-ion-respirator/backend/internal/model"
+	"negative-ion-respirator/backend/internal/repository"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+)
+
+type AuthService struct {
+	repo      *repository.AdminRepo
+	jwtSecret []byte
+}
+
+func NewAuthService(repo *repository.AdminRepo, secret string) *AuthService {
+	return &AuthService{repo: repo, jwtSecret: []byte(secret)}
+}
+
+func (s *AuthService) Login(ctx context.Context, req model.LoginReq) (*model.LoginResp, error) {
+	user, err := s.repo.FindByUsername(ctx, req.Username)
+	if err != nil {
+		return nil, fmt.Errorf("invalid credentials")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
+		return nil, fmt.Errorf("invalid credentials")
+	}
+
+	expiresAt := time.Now().Add(24 * time.Hour)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"role":     user.Role,
+		"exp":      expiresAt.Unix(),
+	})
+
+	tokenStr, err := token.SignedString(s.jwtSecret)
+	if err != nil {
+		return nil, fmt.Errorf("sign token: %w", err)
+	}
+
+	return &model.LoginResp{Token: tokenStr, ExpiresAt: expiresAt.Unix()}, nil
+}
+
+func (s *AuthService) ValidateToken(tokenStr string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return s.jwtSecret, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, fmt.Errorf("invalid token")
+}
