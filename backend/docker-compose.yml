@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    environment:
+      POSTGRES_USER: ion
+      POSTGRES_PASSWORD: ion123
+      POSTGRES_DB: ion_respirator
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ion -d ion_respirator"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  emqx:
+    image: emqx/emqx:latest
+    ports:
+      - "1883:1883"      # MQTT
+      - "8083:8083"      # WebSocket
+      - "18083:18083"    # Dashboard
+    environment:
+      EMQX_NAME: ion-emqx
+      EMQX_HOST: 127.0.0.1
+    healthcheck:
+      test: ["CMD", "emqx", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: "8080"
+      DATABASE_URL: "postgres://ion:ion123@postgres:5432/ion_respirator?sslmode=disable"
+      REDIS_URL: "redis://redis:6379"
+      EMQX_HOST: "tcp://emqx:1883"
+      EMQX_CLIENT_ID: "backend-service"
+      JWT_SECRET: "dev-secret-change-in-production"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  pg_data:
