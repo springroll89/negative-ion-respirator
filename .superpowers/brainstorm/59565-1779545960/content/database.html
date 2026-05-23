@@ -1,0 +1,83 @@
+<h2>数据库设计</h2>
+<p class="subtitle">PostgreSQL + TimescaleDB · 8 张核心表</p>
+
+<div class="section">
+  <h3>ER 关系图</h3>
+  <div style="background:#1a1a2e; border-radius:12px; padding:24px; font-family:monospace; font-size:12px; line-height:1.7; color:#e0e0e0; overflow-x:auto;">
+<pre style="margin:0; color:#e0e0e0;">
+
+  ┌─────────────┐       ┌─────────────┐       ┌─────────────────┐
+  │   users     │       │  devices    │       │  device_config  │
+  │─────────────│       │─────────────│       │─────────────────│
+  │ id (PK)     │──┐    │ id (PK)     │──┐    │ id (PK)         │
+  │ open_id     │  │    │ device_sn   │  │    │ device_id (FK)  │
+  │ nickname    │  │    │ mqtt_topic  │  │    │ max_heat_temp   │
+  │ phone       │  │    │ status      │  │    │ target_out_temp │
+  │ balance     │  │    │ version     │  │    │ updated_at      │
+  │ created_at  │  │    │ last_online │  │    └─────────────────┘
+  └──────┬──────┘  │    │ created_at  │  │
+         │         │    └──────┬──────┘  │
+         │         │           │         │
+         ▼         │           ▼         │
+  ┌─────────────┐ │  ┌──────────────┐   │
+  │   orders    │ │  │ device_logs  │   │    ┌─────────────────┐
+  │─────────────│ │  │ (TimescaleDB)│   │    │  region_config  │
+  │ id (PK)     │ │  │──────────────│   │    │─────────────────│
+  │ user_id ────┘ │  │ device_id ───┘   │    │ id (PK)         │
+  │ device_id  ───┘  │ heat_temp       │    │ region_code     │
+  │ start_time    │  │ out_temp        │    │ season          │
+  │ end_time      │  │ ion_level       │    │ max_heat_temp   │
+  │ duration      │  │ event_type      │    │ target_out_temp │
+  │ amount        │  │ timestamp       │    │ created_at      │
+  │ status        │  └─────────────────┘    └─────────────────┘
+  └──────────────┘
+
+  ┌────────────────┐     ┌───────────────────┐
+  │  batch_tasks   │     │  admin_users      │
+  │────────────────│     │───────────────────│
+  │ id (PK)        │     │ id (PK)           │
+  │ task_type      │     │ username          │
+  │ target_type    │     │ password_hash     │
+  │ target_ids     │     │ role              │
+  │ config_json    │     │ created_at        │
+  │ status         │     └───────────────────┘
+  │ created_at     │
+  └────────────────┘
+</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>核心表说明</h3>
+  <table style="width:100%; border-collapse:collapse; color:#e0e0e0; font-size:13px;">
+    <tr style="border-bottom:1px solid #2a3f5f;">
+      <th style="padding:8px;text-align:left;color:#4fc3f7;">表名</th>
+      <th style="padding:8px;text-align:left;color:#4fc3f7;">存储引擎</th>
+      <th style="padding:8px;text-align:left;color:#4fc3f7;">说明</th>
+      <th style="padding:8px;text-align:left;color:#4fc3f7;">预估数据量</th>
+    </tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>users</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">用户账户、余额</td><td style="padding:8px;">万级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>devices</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">设备注册信息、在线状态</td><td style="padding:8px;">千级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>device_config</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">单设备温度参数</td><td style="padding:8px;">千级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>region_config</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">按地区/季节的默认配置模板</td><td style="padding:8px;">百级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>orders</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">使用订单、计费记录</td><td style="padding:8px;">十万级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>device_logs</code></td><td style="padding:8px;color:#e57373;">TimescaleDB</td><td style="padding:8px;">设备遥测数据(温度/离子/事件)</td><td style="padding:8px;">千万级</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>batch_tasks</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">批量操作任务(调参/升级)</td><td style="padding:8px;">百级</td></tr>
+    <tr><td style="padding:8px;"><code>admin_users</code></td><td style="padding:8px;">PG</td><td style="padding:8px;">后台管理员</td><td style="padding:8px;">十级</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>TimescaleDB 超表设计 (device_logs)</h3>
+  <div style="background:#0d1b2a; border-radius:12px; padding:20px;">
+    <pre style="margin:0; color:#81c784; font-size:12px; line-height:1.6;">
+-- 创建超表，按时间自动分区
+SELECT create_hypertable('device_logs', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+
+-- 自动压缩 7 天前的数据
+SELECT add_compression_policy('device_logs', INTERVAL '7 days');
+
+-- 自动删除 365 天前的数据
+SELECT add_retention_policy('device_logs', INTERVAL '365 days');</pre>
+  </div>
+</div>

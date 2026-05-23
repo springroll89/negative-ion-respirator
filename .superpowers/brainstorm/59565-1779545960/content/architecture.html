@@ -1,0 +1,131 @@
+<h2>负氧离子呼吸器 — 系统整体架构</h2>
+<p class="subtitle">IoT 三层架构：设备层 → 服务层 → 应用层</p>
+
+<div class="section">
+  <h3>架构总览</h3>
+  <div style="background:#1a1a2e; border-radius:12px; padding:24px; font-family:monospace; font-size:13px; line-height:1.8; color:#e0e0e0; overflow-x:auto;">
+<pre style="margin:0; color:#e0e0e0;">
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                        应  用  层                                │
+  │                                                                  │
+  │   ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
+  │   │ "谦昱堂213"  │    │  管理后台    │    │  运维监控    │      │
+  │   │   用户 APP    │    │  (Web 端)   │    │  (Grafana)  │      │
+  │   └──────┬───────┘    └──────┬───────┘    └──────┬───────┘      │
+  └──────────┼──────────────────┼──────────────────┼───────────────┘
+             │                  │                  │
+             │   HTTPS/REST     │   HTTPS/REST     │   HTTP
+             │                  │                  │
+  ┌──────────┴──────────────────┴──────────────────┴───────────────┐
+  │                      服  务  层                                  │
+  │  ┌──────────────────────────────────────────────────────────┐   │
+  │  │                   Nginx (反向代理 + SSL)                  │   │
+  │  └────────────────────────┬─────────────────────────────────┘   │
+  │                           │                                      │
+  │  ┌────────────┬───────────┴───────────┬──────────────────┐     │
+  │  │  Go API    │    EMQX MQTT Broker   │  设备管理服务    │     │
+  │  │  服务      │   (MQTT/WebSocket)    │  (设备注册/认证) │     │
+  │  └─────┬──────┴──────┬──────────────┬─┴────────┬─────────┘     │
+  │        │              │              │           │               │
+  │  ┌─────┴──────────────┴──────────────┴───────────┴──────┐      │
+  │  │              PostgreSQL + TimescaleDB                 │      │
+  │  │         (业务数据)       (时序遥测)                   │      │
+  │  └──────────────────────────────────────────────────────┘      │
+  └─────────────────────────────────────────────────────────────────┘
+                           │
+                           │  MQTT (TLS) / 4G
+                           │
+  ┌────────────────────────┴────────────────────────────────────────┐
+  │                       设  备  层                                  │
+  │                                                                   │
+  │   ┌──────────────┐                     ┌──────────────┐          │
+  │   │  呼吸器 #1   │                     │  呼吸器 #2   │   ...   │
+  │   │  ESP32 +     │                     │  ESP32 +     │          │
+  │   │  Wi-Fi/4G    │                     │  Wi-Fi/4G    │          │
+  │   └──────────────┘                     └──────────────┘          │
+  └──────────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>数据流</h3>
+  <div style="background:#0d1b2a; border-radius:12px; padding:20px;">
+
+    <div style="display:flex; align-items:center; justify-content:space-around; color:#e0e0e0; font-size:14px; flex-wrap:wrap; gap:12px;">
+      <div style="text-align:center; background:#1b2d3e; padding:16px; border-radius:8px; min-width:120px;">
+        <div style="color:#4fc3f7; font-weight:bold; margin-bottom:6px;">用户</div>
+        <div style="font-size:12px; color:#90a4ae;">扫码</div>
+      </div>
+      <div style="font-size:20px; color:#4fc3f7;">→</div>
+      <div style="text-align:center; background:#1b2d3e; padding:16px; border-radius:8px; min-width:120px;">
+        <div style="color:#81c784; font-weight:bold; margin-bottom:6px;">APP</div>
+        <div style="font-size:12px; color:#90a4ae;">身份验证<br>发起启动</div>
+      </div>
+      <div style="font-size:20px; color:#81c784;">→</div>
+      <div style="text-align:center; background:#1b2d3e; padding:16px; border-radius:8px; min-width:120px;">
+        <div style="color:#ffb74d; font-weight:bold; margin-bottom:6px;">Go API</div>
+        <div style="font-size:12px; color:#90a4ae;">鉴权/计费<br>下发指令</div>
+      </div>
+      <div style="font-size:20px; color:#ffb74d;">→</div>
+      <div style="text-align:center; background:#1b2d3e; padding:16px; border-radius:8px; min-width:120px;">
+        <div style="color:#e57373; font-weight:bold; margin-bottom:6px;">EMQX</div>
+        <div style="font-size:12px; color:#90a4ae;">MQTT转发<br>到设备Topic</div>
+      </div>
+      <div style="font-size:20px; color:#e57373;">→</div>
+      <div style="text-align:center; background:#1b2d3e; padding:16px; border-radius:8px; min-width:120px;">
+        <div style="color:#ba68c8; font-weight:bold; margin-bottom:6px;">ESP32</div>
+        <div style="font-size:12px; color:#90a4ae;">启动设备<br>温控/状态上报</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:12px; background:#1b2d3e; border-radius:8px; text-align:center; color:#90a4ae; font-size:13px;">
+      返回链路: ESP32 → MQTT → Go API → APP (使用结束/状态上报/费用结算)
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>MOTT 主题设计</h3>
+  <div style="background:#0d1b2a; border-radius:12px; padding:20px;">
+    <table style="width:100%; border-collapse:collapse; color:#e0e0e0; font-size:13px;">
+      <tr style="border-bottom:1px solid #2a3f5f;">
+        <th style="padding:10px; text-align:left; color:#4fc3f7;">Topic</th>
+        <th style="padding:10px; text-align:left; color:#4fc3f7;">方向</th>
+        <th style="padding:10px; text-align:left; color:#4fc3f7;">说明</th>
+        <th style="padding:10px; text-align:left; color:#4fc3f7;">QoS</th>
+      </tr>
+      <tr style="border-bottom:1px solid #1b2d3e;">
+        <td style="padding:10px;"><code>device/{id}/cmd</code></td>
+        <td style="padding:10px;">云→设备</td>
+        <td style="padding:10px;">启动/停止/调温指令</td>
+        <td style="padding:10px;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1b2d3e;">
+        <td style="padding:10px;"><code>device/{id}/status</code></td>
+        <td style="padding:10px;">设备→云</td>
+        <td style="padding:10px;">工作状态/温度/离子浓度</td>
+        <td style="padding:10px;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1b2d3e;">
+        <td style="padding:10px;"><code>device/{id}/ota</code></td>
+        <td style="padding:10px;">云→设备</td>
+        <td style="padding:10px;">固件OTA升级</td>
+        <td style="padding:10px;">2</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1b2d3e;">
+        <td style="padding:10px;"><code>device/{id}/heartbeat</code></td>
+        <td style="padding:10px;">设备→云</td>
+        <td style="padding:10px;">心跳/在线状态</td>
+        <td style="padding:10px;">0</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;"><code>device/{id}/event</code></td>
+        <td style="padding:10px;">设备→云</td>
+        <td style="padding:10px;">异常告警/故障事件</td>
+        <td style="padding:10px;">1</td>
+      </tr>
+    </table>
+  </div>
+</div>

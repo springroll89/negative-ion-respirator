@@ -1,0 +1,96 @@
+<h2>Go 后台服务设计</h2>
+<p class="subtitle">分层架构：Handler → Service → Repository → DB</p>
+
+<div class="section">
+  <h3>服务分层</h3>
+  <div style="background:#1a1a2e; border-radius:12px; padding:24px; font-family:monospace; font-size:12px; line-height:1.7; color:#e0e0e0; overflow-x:auto;">
+<pre style="margin:0; color:#e0e0e0;">
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                     Go 后台服务 (单二进制，多 goroutine)          │
+  │                                                                  │
+  │  ┌───────────────────────────────────────────────────────────┐  │
+  │  │  Transport Layer (Gin Router)                              │  │
+  │  │  POST /api/v1/device/start    GET /api/v1/device/:id      │  │
+  │  │  POST /api/v1/device/stop     GET /api/v1/devices         │  │
+  │  │  POST /api/v1/device/config   DELETE /api/v1/device/:id   │  │
+  │  └──────────────────────┬────────────────────────────────────┘  │
+  │                         │                                        │
+  │  ┌──────────────────────┴────────────────────────────────────┐  │
+  │  │  Handler Layer - 请求校验、参数绑定、响应封装               │  │
+  │  │  device_handler | user_handler | admin_handler | auth_handler│
+  │  └──────────────────────┬────────────────────────────────────┘  │
+  │                         │                                        │
+  │  ┌──────────────────────┴────────────────────────────────────┐  │
+  │  │  Service Layer - 业务逻辑                                  │  │
+  │  │  DeviceService (启动/停止/配置)  OrderService (订单/计费)  │  │
+  │  │  MQTTService (指令下发)         UserService (用户/鉴权)   │  │
+  │  │  MonitorService (设备监控)      AdminService (后台管理)   │  │
+  │  └──────────────────────┬────────────────────────────────────┘  │
+  │                         │                                        │
+  │  ┌──────────────────────┴────────────────────────────────────┐  │
+  │  │  Repository Layer - 数据访问                               │  │
+  │  │  DeviceRepo | OrderRepo | UserRepo | TelemetryRepo        │  │
+  │  └──────────────────────┬────────────────────────────────────┘  │
+  │                         │                                        │
+  │  ┌──────────────────────┴────────────────────────────────────┐  │
+  │  │  Infra Layer                                               │  │
+  │  │  PostgreSQL | EMQX Client | Redis (缓存) | JWT            │  │
+  │  └───────────────────────────────────────────────────────────┘  │
+  └─────────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>核心 API 端点</h3>
+  <table style="width:100%; border-collapse:collapse; color:#e0e0e0; font-size:13px;">
+    <tr style="border-bottom:1px solid #2a3f5f;">
+      <th style="padding:8px;text-align:left;color:#4fc3f7;width:40%;">接口</th>
+      <th style="padding:8px;text-align:left;color:#4fc3f7;width:30%;">功能</th>
+      <th style="padding:8px;text-align:left;color:#4fc3f7;">调用方</th>
+    </tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>POST /api/v1/order/create</code></td><td style="padding:8px;">扫码创建订单</td><td style="padding:8px;">APP</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>POST /api/v1/device/start</code></td><td style="padding:8px;">启动设备</td><td style="padding:8px;">APP</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>POST /api/v1/device/stop</code></td><td style="padding:8px;">停止设备</td><td style="padding:8px;">APP</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>GET /api/v1/device/status/:id</code></td><td style="padding:8px;">查询设备状态</td><td style="padding:8px;">APP/管理后台</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>PUT /api/v1/admin/device/config</code></td><td style="padding:8px;">远程调温配置</td><td style="padding:8px;">管理后台</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>GET /api/v1/admin/devices</code></td><td style="padding:8px;">设备列表/批量管理</td><td style="padding:8px;">管理后台</td></tr>
+    <tr style="border-bottom:1px solid #1b2d3e;"><td style="padding:8px;"><code>POST /api/v1/admin/batch/config</code></td><td style="padding:8px;">按地区/季节批量调参</td><td style="padding:8px;">管理后台</td></tr>
+    <tr><td style="padding:8px;"><code>GET /api/v1/admin/report/*</code></td><td style="padding:8px;">使用报表/营收统计</td><td style="padding:8px;">管理后台</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>三大核心流程</h3>
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">扫码使用流程</div>
+      <div class="mockup-body">
+        <ol style="line-height:2; font-size:13px; color:#90a4ae; padding-left:16px; margin:0;">
+          <li>用户扫码 → APP 调用 <code>/order/create</code></li>
+          <li>后台生成订单 + 验证用户</li>
+          <li>APP 调用 <code>/device/start</code></li>
+          <li>后台通过 MQTT 下发启动指令</li>
+          <li>设备进入 HEATING → RUNNING</li>
+          <li>设备定时上报状态</li>
+          <li>使用结束 → APP 调 <code>/device/stop</code></li>
+          <li>后台结算订单 + 停止设备</li>
+        </ol>
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">远程温控流程</div>
+      <div class="mockup-body">
+        <ol style="line-height:2; font-size:13px; color:#90a4ae; padding-left:16px; margin:0;">
+          <li>管理员在后台修改温度配置</li>
+          <li>API 校验权限和参数范围</li>
+          <li>写入配置到 DB (地区/设备级)</li>
+          <li>MQTT 下发新配置到目标设备</li>
+          <li>设备更新 PID 目标值</li>
+          <li>支持按设备/地区/季节批量</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>

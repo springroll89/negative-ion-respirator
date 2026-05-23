@@ -1,0 +1,31 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+backend/tmp/
+backend/bin/
+backend/vendor/
+
+# Node
+web-admin/node_modules/
+web-admin/dist/
+
+# ESP32
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log

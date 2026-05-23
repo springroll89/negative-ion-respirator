@@ -1,0 +1,132 @@
+<h2>项目结构 &amp; 开发阶段</h2>
+<p class="subtitle">双工程：ESP32 固件 + Go 后台 · 4 阶段迭代</p>
+
+<div class="section">
+  <h3>项目工程结构</h3>
+  <div style="background:#1a1a2e; border-radius:12px; padding:20px; font-family:monospace; font-size:12px; line-height:1.6; color:#e0e0e0; overflow-x:auto;">
+<pre style="margin:0; color:#e0e0e0;">
+负氧离子呼吸器程序/
+├── firmware/                    # ESP32 固件工程
+│   ├── main/
+│   │   ├── main.c              # 入口 + 状态机
+│   │   └── CMakeLists.txt
+│   ├── components/
+│   │   ├── mqtt_client/        # MQTT 封装
+│   │   ├── heater_ctrl/        # PID 温控
+│   │   ├── ion_gen/            # 负离子发生器驱动
+│   │   ├── led_indicator/      # LED 指示灯
+│   │   ├── state_machine/      # 状态机
+│   │   ├── safety_watchdog/    # 安全看门狗
+│   │   ├── comm_4g/            # 4G 模块驱动
+│   │   └── ota/                # OTA 升级
+│   ├── partitions.csv          # Flash 分区表
+│   └── sdkconfig               # ESP32 配置
+│
+├── backend/                     # Go 后台工程
+│   ├── cmd/server/main.go      # 服务入口
+│   ├── internal/
+│   │   ├── handler/            # HTTP Handler
+│   │   ├── service/            # 业务逻辑
+│   │   ├── repository/         # 数据访问
+│   │   ├── mqtt/               # EMQX Client
+│   │   ├── model/              # 数据模型
+│   │   ├── middleware/         # 鉴权/日志中间件
+│   │   └── config/             # 配置管理
+│   ├── migrations/             # SQL 迁移脚本
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── go.mod
+│
+├── web-admin/                   # 管理后台前端
+│   └── (Vue 3 + Element Plus)
+│
+├── docs/                        # 协调文档
+│   └── protocol.md             # 设备-后台通信协议定义
+│
+└── 负氧离子呼吸器技术协议.doc    # 原始技术文档
+</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>4 阶段开发计划</h3>
+
+  <div style="display:grid; gap:16px; margin-top:16px;">
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:18px; border-left:4px solid #4fc3f7;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="color:#4fc3f7; margin:0;">Phase 1: 基础设施 &amp; 协议定义</h4>
+        <span style="color:#4fc3f7; font-size:12px;">预计 3-5 天</span>
+      </div>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:8px 0 0 0; padding-left:16px;">
+        <li>定义 MQTT 通信协议 (Topic + 消息格式 JSON)</li>
+        <li>定义 REST API 接口规范 (OpenAPI 3.0)</li>
+        <li>搭建 PostgreSQL + EMQX Docker 环境</li>
+        <li>Go 项目骨架 + 数据库 Migration</li>
+        <li>ESP32 项目骨架 + 基础 MQTT 连接</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:18px; border-left:4px solid #ffb74d;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="color:#ffb74d; margin:0;">Phase 2: 核心功能 — 设备控制链路</h4>
+        <span style="color:#ffb74d; font-size:12px;">预计 5-7 天</span>
+      </div>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:8px 0 0 0; padding-left:16px;">
+        <li>ESP32: PID温控 + 负离子驱动 + 状态机 + LED</li>
+        <li>Go API: 设备注册/启动/停止/状态查询</li>
+        <li>MQTT 指令下发 + 状态上报闭环</li>
+        <li>订单创建/计费基础逻辑</li>
+        <li>管理后台: 设备列表 + 实时状态面板</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:18px; border-left:4px solid #81c784;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="color:#81c784; margin:0;">Phase 3: 高级功能 &amp; 安全加固</h4>
+        <span style="color:#81c784; font-size:12px;">预计 4-6 天</span>
+      </div>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:8px 0 0 0; padding-left:16px;">
+        <li>ESP32: 4G 模块驱动 + Wi-Fi/4G 自动切换</li>
+        <li>ESP32: OTA 固件升级</li>
+        <li>ESP32: 安全看门狗 + 硬保护电路逻辑</li>
+        <li>Go: 批量调参 (按地区/季节)</li>
+        <li>Go: 用户认证 JWT + API 限流</li>
+        <li>Go: 使用报表 + 营收统计</li>
+        <li>管理后台: 批量管理 + 报表页面</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:18px; border-left:4px solid #e57373;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="color:#e57373; margin:0;">Phase 4: 联调测试 &amp; 上线</h4>
+        <span style="color:#e57373; font-size:12px;">预计 3-5 天</span>
+      </div>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:8px 0 0 0; padding-left:16px;">
+        <li>ESP32-后台-APP 三方联调</li>
+        <li>压力测试 (多设备并发)</li>
+        <li>安全测试 (MQTT TLS + API 渗透)</li>
+        <li>部署文档 + 运维手册</li>
+        <li>生产环境 Docker 部署</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>通信协议示例 (MQTT Payload)</h3>
+  <div style="background:#0d1b2a; border-radius:12px; padding:16px;">
+    <pre style="margin:0; color:#e0e0e0; font-size:12px; line-height:1.6;">
+<span style="color:#78909c;">// 云端 → 设备: device/{id}/cmd</span>
+{<span style="color:#81c784;">"cmd"</span>: <span style="color:#ce93d8;">"start"</span>, <span style="color:#81c784;">"tid"</span>: <span style="color:#ce93d8;">"uuid-xxx"</span>, <span style="color:#81c784;">"max_heat"</span>: 80, <span style="color:#81c784;">"target_out"</span>: 35}
+
+<span style="color:#78909c;">// 设备 → 云端: device/{id}/status (每 5s 上报)</span>
+{<span style="color:#81c784;">"status"</span>: <span style="color:#ce93d8;">"running"</span>, <span style="color:#81c784;">"heat_temp"</span>: 72, <span style="color:#81c784;">"out_temp"</span>: 34.5, <span style="color:#81c784;">"ion_ok"</span>: true, <span style="color:#81c784;">"uptime"</span>: 120}
+
+<span style="color:#78909c;">// 设备 → 云端: device/{id}/heartbeat (每 30s)</span>
+{<span style="color:#81c784;">"rssi"</span>: -45, <span style="color:#81c784;">"heap"</span>: 128456, <span style="color:#81c784;">"conn_type"</span>: <span style="color:#ce93d8;">"wifi"</span>}
+
+<span style="color:#78909c;">// 设备 → 云端: device/{id}/event (异常时)</span>
+{<span style="color:#81c784;">"event"</span>: <span style="color:#ce93d8;">"over_temp"</span>, <span style="color:#81c784;">"value"</span>: 85, <span style="color:#81c784;">"limit"</span>: 80, <span style="color:#81c784;">"action"</span>: <span style="color:#ce93d8;">"auto_shutdown"</span>}</pre>
+  </div>
+</div>

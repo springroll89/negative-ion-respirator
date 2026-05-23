@@ -1,0 +1,116 @@
+<h2>ESP32 固件设计</h2>
+<p class="subtitle">FreeRTOS + ESP-IDF 框架，模块化设计</p>
+
+<div class="section">
+  <h3>固件模块架构</h3>
+  <div style="background:#1a1a2e; border-radius:12px; padding:24px; font-family:monospace; font-size:12px; line-height:1.7; color:#e0e0e0; overflow-x:auto;">
+<pre style="margin:0; color:#e0e0e0;">
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │                    ESP32 固件架构                              │
+  │                                                               │
+  │  ┌─────────┐  ┌──────────┐  ┌───────────┐  ┌────────────┐  │
+  │  │ MQTT    │  │ OTA      │  │ 命令解析  │  │  日志模块  │  │
+  │  │ 客户端  │  │ 升级模块 │  │  & 调度   │  │            │  │
+  │  └────┬────┘  └────┬─────┘  └─────┬─────┘  └─────┬──────┘  │
+  │       │            │              │               │          │
+  │  ┌────┴────────────┴──────────────┴───────────────┴──────┐  │
+  │  │              核心状态机 (State Machine)                 │  │
+  │  │   IDLE → HEATING → RUNNING → COOLING → DONE → IDLE    │  │
+  │  └────────────────────────┬───────────────────────────────┘  │
+  │                           │                                   │
+  │  ┌────────┬────────┬──────┴───────┬──────────┬──────────┐   │
+  │  │ 温控   │ 负离子 │ LED         │ 按键     │ 看门狗   │   │
+  │  │ PID    │ 发生器 │ 指示灯      │ 输入     │ WDT      │   │
+  │  └───┬────┴───┬────┴──────┬──────┴────┬─────┴────┬─────┘   │
+  │      │        │           │           │          │          │
+  │  ┌───┴────────┴───────────┴───────────┴──────────┴──────┐  │
+  │  │              底层驱动层 (HAL)                           │  │
+  │  │  GPIO | PWM | ADC | I2C | SPI | UART | Wi-Fi | 4G    │  │
+  │  └────────────────────────────────────────────────────────┘  │
+  └──────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>设备状态机</h3>
+  <div style="background:#0d1b2a; border-radius:12px; padding:20px;">
+
+    <div style="display:flex; align-items:center; justify-content:space-around; flex-wrap:wrap; gap:10px; font-size:13px;">
+      <div style="background:#1b2d3e; padding:14px 18px; border-radius:8px; text-align:center; border:2px solid #4fc3f7;">
+        <div style="color:#4fc3f7; font-weight:bold;">IDLE</div>
+        <div style="color:#90a4ae; font-size:11px; margin-top:4px;">待机，等待指令</div>
+        <div style="color:#78909c; font-size:10px;">LED1=亮 LED2=灭</div>
+      </div>
+      <div style="color:#4fc3f7; font-size:18px;">→</div>
+      <div style="background:#1b2d3e; padding:14px 18px; border-radius:8px; text-align:center; border:2px solid #ffb74d;">
+        <div style="color:#ffb74d; font-weight:bold;">HEATING</div>
+        <div style="color:#90a4ae; font-size:11px; margin-top:4px;">预热中</div>
+        <div style="color:#78909c; font-size:10px;">LED2=闪烁</div>
+      </div>
+      <div style="color:#ffb74d; font-size:18px;">→</div>
+      <div style="background:#1b2d3e; padding:14px 18px; border-radius:8px; text-align:center; border:2px solid #81c784;">
+        <div style="color:#81c784; font-weight:bold;">RUNNING</div>
+        <div style="color:#90a4ae; font-size:11px; margin-top:4px;">工作中，负离子+加热</div>
+        <div style="color:#78909c; font-size:10px;">LED2=亮</div>
+      </div>
+      <div style="color:#81c784; font-size:18px;">→</div>
+      <div style="background:#1b2d3e; padding:14px 18px; border-radius:8px; text-align:center; border:2px solid #e57373;">
+        <div style="color:#e57373; font-weight:bold;">DONE/ERR</div>
+        <div style="color:#90a4ae; font-size:11px; margin-top:4px;">结束或故障</div>
+        <div style="color:#78909c; font-size:10px;">LED2=快闪/灭</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>关键技术点</h3>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:16px;">
+      <h4 style="color:#ffb74d; margin:0 0 8px 0;">温控 PID 算法</h4>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:0; padding-left:16px;">
+        <li>双传感器: 加热管温度 + 出气口温度</li>
+        <li>PID 控制 PWM 占空比调节加热功率</li>
+        <li>目标出气口温度 30-40°C</li>
+        <li>加热管硬上限 80°C 硬件保护</li>
+        <li>超温自动断电 (独立硬件比较器)</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:16px;">
+      <h4 style="color:#81c784; margin:0 0 8px 0;">安全防护</h4>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:0; padding-left:16px;">
+        <li>看门狗定时器 (硬件WDT)</li>
+        <li>过温双重保护 (软件+硬件)</li>
+        <li>负离子发生器异常检测</li>
+        <li>4G/Wi-Fi 断网自动重连</li>
+        <li>断电状态保存 (NVS)</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:16px;">
+      <h4 style="color:#4fc3f7; margin:0 0 8px 0;">MQTT 客户端</h4>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:0; padding-left:16px;">
+        <li>ESP-MQTT 库 (TLS 加密)</li>
+        <li>LWT 遗嘱消息: 设备离线自动通知</li>
+        <li>QoS 1 指令确保送达</li>
+        <li>断线自动重连 + 消息队列</li>
+      </ul>
+    </div>
+
+    <div style="background:#0d1b2a; border-radius:12px; padding:16px;">
+      <h4 style="color:#ba68c8; margin:0 0 8px 0;">4G 模块驱动</h4>
+      <ul style="color:#90a4ae; font-size:13px; line-height:1.8; margin:0; padding-left:16px;">
+        <li>UART AT 指令控制 SIMCom</li>
+        <li>PPP 拨号建立数据连接</li>
+        <li>Wi-Fi / 4G 自动切换</li>
+        <li>信号质量监测</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
