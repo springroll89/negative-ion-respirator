@@ -51,12 +51,15 @@ func main() {
 	deviceSvc := service.NewDeviceService(deviceRepo, mqttClient)
 	orderSvc := service.NewOrderService(orderRepo, userRepo, deviceSvc)
 	authSvc := service.NewAuthService(adminRepo, cfg.JWTSecret)
+	batchSvc := service.NewBatchService(deviceRepo, deviceSvc)
+	reportSvc := service.NewReportService(deviceRepo, orderRepo, telemetryRepo)
 
 	// Handlers
 	deviceH := handler.NewDeviceHandler(deviceSvc)
 	orderH := handler.NewOrderHandler(orderSvc)
 	authH := handler.NewAuthHandler(authSvc)
 	adminH := handler.NewAdminHandler(deviceSvc)
+	batchH := handler.NewBatchHandler(batchSvc, reportSvc)
 
 	// Routes
 	r := gin.Default()
@@ -80,6 +83,14 @@ func main() {
 			admin.GET("/device/:id", adminH.GetDeviceStatus)
 			admin.POST("/device/register", deviceH.Register)
 			admin.PUT("/device/config", adminH.UpdateDeviceConfig)
+
+			// Batch config
+			admin.POST("/batch/config", batchH.CreateBatchConfig)
+			admin.GET("/batch/task/:id", batchH.GetTaskStatus)
+
+			// Reports
+			admin.GET("/dashboard", batchH.GetDashboard)
+			admin.GET("/report", batchH.GetReport)
 		}
 	}
 
