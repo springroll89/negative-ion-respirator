@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 type Config struct {
 	ServerPort   string
@@ -12,14 +15,23 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	return &Config{
+	cfg := &Config{
 		ServerPort:   getEnv("SERVER_PORT", "8080"),
-		DatabaseURL:  getEnv("DATABASE_URL", "postgres://ion:ion123@localhost:5432/ion_respirator?sslmode=disable"),
-		RedisURL:     getEnv("REDIS_URL", "localhost:6379"),
+		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379"),
 		EMQXHost:     getEnv("EMQX_HOST", "tcp://localhost:1883"),
 		EMQXClientID: getEnv("EMQX_CLIENT_ID", "backend-service"),
-		JWTSecret:    getEnv("JWT_SECRET", "change-me-in-production"),
-	}, nil
+		JWTSecret:    os.Getenv("JWT_SECRET"),
+	}
+
+	if cfg.DatabaseURL == "" {
+		return nil, fmt.Errorf("DATABASE_URL is required")
+	}
+	if cfg.JWTSecret == "" {
+		return nil, fmt.Errorf("JWT_SECRET is required")
+	}
+
+	return cfg, nil
 }
 
 func getEnv(key, fallback string) string {

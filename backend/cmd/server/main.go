@@ -20,7 +20,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.ServerPort,
-		Handler:      setupRouter(cfg),
+		Handler:      setupRouter(),
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
@@ -45,7 +45,7 @@ func main() {
 	}
 }
 
-func setupRouter(cfg *config.Config) http.Handler {
+func setupRouter() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
